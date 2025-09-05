@@ -173,13 +173,14 @@ def api_purchase_balance():
     data = request.get_json(force=True, silent=True) or {}
     tokens = data.get("tokens")
     package_option_code = data.get("package_option_code")
+    amount = data.get("amount")  # optional
 
     if not tokens or not package_option_code:
         return jsonify({"error": "Missing tokens or package_option_code"}), 400
 
     try:
         from .api_request import purchase_package
-        result = purchase_package(api_key_from_request(request), tokens, package_option_code)
+        result = purchase_package(api_key_from_request(request), tokens, package_option_code, amount)
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
