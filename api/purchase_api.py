@@ -154,52 +154,26 @@ def settlement_multipayment(
         print("[decrypt err]", e)
         return resp.text
 
-def show_multipayment(api_key: str, tokens: dict, package_option_code: str, token_confirmation: str, price: int, item_name: str = ""):
-    print("Fetching available payment methods...")
-    
+def show_multipayment(api_key: str, tokens: dict, package_option_code: str,
+                      token_confirmation: str, price: int,
+                      payment_method: str, wallet_number: str = "", item_name: str = ""):
+    """
+    payment_method harus salah satu dari:
+    DANA, SHOPEEPAY, GOPAY, OVO
+    """
+    valid_methods = ["DANA", "SHOPEEPAY", "GOPAY", "OVO"]
+    if payment_method not in valid_methods:
+        return {"error": f"Invalid payment method: {payment_method}"}
+
     payment_methods_data = get_payment_methods(
         api_key=api_key,
         tokens=tokens,
         token_confirmation=token_confirmation,
         payment_target=package_option_code,
     )
-    
     token_payment = payment_methods_data["token_payment"]
     ts_to_sign = payment_methods_data["timestamp"]
-    
-    choosing_payment_method = True
-    while choosing_payment_method:
-        payment_method = ""
-        wallet_number = ""
-        print("Pilihan multipayment:")
-        print("1. DANA\n2. ShopeePay\n3. GoPay\n4. OVO")
-        choice = input("Pilih metode pembayaran: ")
-        if choice == "1":
-            payment_method = "DANA"
-            wallet_number = input("Masukkan nomor DANA (contoh: 08123456789): ")
-            # Validate number format
-            if not wallet_number.startswith("08") or not wallet_number.isdigit() or len(wallet_number) < 10 or len(wallet_number) > 13:
-                print("Nomor DANA tidak valid. Pastikan nomor diawali dengan '08' dan memiliki panjang yang benar.")
-                continue
-            choosing_payment_method = False
-        elif choice == "2":
-            payment_method = "SHOPEEPAY"
-            choosing_payment_method = False
-        elif choice == "3":
-            payment_method = "GOPAY"
-            choosing_payment_method = False
-        elif choice == "4":
-            payment_method = "OVO"
-            wallet_number = input("Masukkan nomor OVO (contoh: 08123456789): ")
-            # Validate number format
-            if not wallet_number.startswith("08") or not wallet_number.isdigit() or len(wallet_number) < 10 or len(wallet_number) > 13:
-                print("Nomor OVO tidak valid. Pastikan nomor diawali dengan '08' dan memiliki panjang yang benar.")
-                continue
-            choosing_payment_method = False
-        else:
-            print("Pilihan tidak valid.")
-            continue
-    
+
     settlement_response = settlement_multipayment(
         api_key,
         tokens,
@@ -211,20 +185,8 @@ def show_multipayment(api_key: str, tokens: dict, package_option_code: str, toke
         item_name,
         payment_method
     )
-    
-    # print(f"Settlement response: {json.dumps(settlement_response, indent=2)}")
-    if settlement_response["status"] != "SUCCESS":
-        print("Failed to initiate settlement.")
-        print(f"Error: {settlement_response}")
-        return
-    
-    if payment_method != "OVO":
-        deeplink = settlement_response["data"].get("deeplink", "")
-        if deeplink:
-            print(f"Silahkan selesaikan pembayaran melalui link berikut:\n{deeplink}")
-    else:
-        print("Silahkan buka aplikasi OVO Anda untuk menyelesaikan pembayaran.")
-    return
+
+    return settlement_response
 
 def settlement_qris(
     api_key: str,
