@@ -167,6 +167,21 @@ def multipayment():
     )
     return jsonify(result)
 
+@app.post("/api/purchase/multipayment")
+def api_purchase_multipayment():
+    data = request.json
+    result = show_multipayment(
+        api_key=api_key_from_request(request),
+        tokens=data.get("tokens"),
+        package_option_code=data.get("package_option_code"),
+        token_confirmation=data.get("token_confirmation"),
+        price=data.get("price"),
+        item_name=data.get("item_name", ""),
+        payment_method=data.get("payment_method"),
+        wallet_number=data.get("wallet_number", "")
+    )
+    return jsonify(result)
+
 @app.post("/api/purchase/qris")
 def api_purchase_qris():
     data = request.get_json(force=True, silent=True) or {}
