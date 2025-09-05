@@ -110,9 +110,93 @@ def settlement_multipayment(
         api_key=api_key,
         method="POST",
         path=path,
+
+def settlement_multipayment(
+    api_key: str,
+    tokens: dict,
+    token_payment: str,
+    ts_to_sign: int,
+    payment_target: str,
+    price: int,
+    wallet_number: str,
+    item_name: str = "",
+    payment_method: str = "DANA"
+):
+    # Settlement request
+    path = "payments/api/v8/settlement-multipayment/ewallet"
+    settlement_payload = {
+        "akrab": {
+            "akrab_members": [],
+            "akrab_parent_alias": "",
+            "members": []
+        },
+        "can_trigger_rating": False,
+        "total_discount": 0,
+        "coupon": "",
+        "payment_for": "BUY_PACKAGE",
+        "topup_number": "",
+        "is_enterprise": False,
+        "autobuy": {
+            "is_using_autobuy": False,
+            "activated_autobuy_code": "",
+            "autobuy_threshold_setting": {
+            "label": "",
+            "type": "",
+            "value": 0
+            }
+        },
+        "cc_payment_type": "",
+        "access_token": tokens["access_token"],
+        "is_myxl_wallet": False,
+        "wallet_number": wallet_number,
+        "additional_data": {
+            "original_price": price,
+            "is_spend_limit_temporary": False,
+            "migration_type": "",
+            "spend_limit_amount": 0,
+            "is_spend_limit": False,
+            "tax": 0,
+            "benefit_type": "",
+            "quota_bonus": 0,
+            "cashtag": "",
+            "is_family_plan": False,
+            "combo_details": [],
+            "is_switch_plan": False,
+            "discount_recurring": 0,
+            "has_bonus": False,
+            "discount_promo": 0
+        },
+        "total_amount": price,
+        "total_fee": 0,
+        "is_use_point": False,
+        "lang": "en",
+        "items": [{
+            "item_code": payment_target,
+            "product_type": "",
+            "item_price": price,
+            "item_name": item_name,
+            "tax": 0
+        }],
+        "verification_token": token_payment,
+        "payment_method": payment_method,
+        "timestamp": int(time.time())
+    }
+    
+    print("[DEBUG] settlement_payload sebelum encryptsign_xdata:")
+    print(json.dumps(settlement_payload, indent=2))
+    print("[CHECK] total_amount:", settlement_payload["total_amount"], type(settlement_payload["total_amount"]))
+    print("[CHECK] item_price:", settlement_payload["items"][0]["item_price"], type(settlement_payload["items"][0]["item_price"]))
+    
+    encrypted_payload = encryptsign_xdata(
+        api_key=api_key,
+        method="POST",
+        path=path,
         id_token=tokens["id_token"],
         payload=settlement_payload
     )
+    
+    print("[DEBUG] settlement_payload sesudah encryptsign_xdata:")
+    print(json.dumps(encrypted_payload, indent=2))
     
     xtime = int(encrypted_payload["encrypted_body"]["xtime"])
     sig_time_sec = (xtime // 1000)
