@@ -152,19 +152,20 @@ def api_package_addons():
     res = get_addons(api_key, tokens, code)
     return jsonify({"ok": True, "result": res})
 
-@app.post("/api/purchase/multipayment")
-def api_purchase_multipayment():
-    data = request.get_json(force=True, silent=True) or {}
-    api_key = api_key_from_request(request)
-    tokens = data.get("tokens") or {}
-    poc = data.get("package_option_code")
-    conf = data.get("token_confirmation")
-    price = data.get("price")
-    item = data.get("item_name")
-    if not api_key or not tokens or not poc or conf is None or price is None or not item:
-        return jsonify({"error":"missing_fields","fields":["tokens","package_option_code","token_confirmation","price","item_name","X-Api-Key"]}), 400
-    res = show_multipayment(api_key, tokens, poc, conf, int(price), item)
-    return jsonify({"ok": True, "result": res})
+@app.post("/api/payment/multipayment")
+def multipayment():
+    data = request.json
+    result = show_multipayment(
+        api_key=data.get("api_key"),
+        tokens=data.get("tokens"),
+        package_option_code=data.get("package_option_code"),
+        token_confirmation=data.get("token_confirmation"),
+        price=data.get("price"),
+        payment_method=data.get("payment_method"),
+        wallet_number=data.get("wallet_number", ""),
+        item_name=data.get("item_name", "")
+    )
+    return jsonify(result)
 
 @app.post("/api/purchase/qris")
 def api_purchase_qris():
