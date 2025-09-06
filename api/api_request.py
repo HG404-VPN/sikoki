@@ -44,12 +44,8 @@ def get_otp(contact: str) -> dict:
     print("Requesting OTP...")
     try:
         response = requests.get(url, headers=headers, params=querystring, timeout=30)
-        json_body = response.json()
-    
-        if "subscriber_id" not in json_body:
-            return {"status": "FAILED", "error": json_body.get("error", "Subscriber ID not found")}
+        return response.json()
         
-        return {"status": "OK", "subscriber_id": json_body["subscriber_id"]}
     except Exception as e:
         return {"status": "FAILED", "error": str(e)}
     
