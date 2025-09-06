@@ -15,6 +15,8 @@ from .purchase_api import (
     show_qris_payment, get_qris_code, settlement_qris, settlement_bounty
 )
 
+from api.api_request import purchase_packages_multi
+
 app = Flask(__name__)
 
 def api_key_from_request(req):
