@@ -1,14 +1,9 @@
 from .api_request import get_package, send_api_request
-from .auth_helper import AuthInstance
 
-# Fetch my packages (backend version)
-def fetch_my_packages():
-    api_key = AuthInstance.api_key
-    tokens = AuthInstance.get_active_tokens()
-    if not tokens:
-        return {"error": "no_active_tokens"}
-
+def fetch_my_packages(api_key: str, tokens: dict) -> dict:
     id_token = tokens.get("id_token")
+    if not id_token:
+        return {"error": "missing_id_token"}
 
     path = "api/v8/packages/quota-details"
     payload = {
