@@ -15,6 +15,8 @@ from .purchase_api import (
     show_qris_payment, get_qris_code, settlement_qris, settlement_bounty
 )
 
+from .api.my_package import fetch_my_packages
+
 app = Flask(__name__)
 
 def api_key_from_request(req):
@@ -107,6 +109,17 @@ def api_balance():
     if not api_key or not tokens:
         return jsonify({"error":"missing_fields","fields":["tokens","X-Api-Key"]}), 400
     res = get_balance(api_key, tokens.get("id_token"))
+    return jsonify({"ok": True, "result": res})
+
+@app.post("/api/my-packages")
+def api_my_packages():
+    api_key = api_key_from_request(request)
+    data = request.get_json(force=True, silent=True) or {}
+    tokens = data.get("tokens") or {}
+    if not api_key or not tokens:
+        return jsonify({"error":"missing_fields","fields":["tokens","X-Api-Key"]}), 400
+    
+    res = fetch_my_packages()
     return jsonify({"ok": True, "result": res})
 
 @app.post("/api/family")
