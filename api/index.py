@@ -117,8 +117,11 @@ def api_my_packages():
     data = request.get_json(force=True, silent=True) or {}
     tokens = data.get("tokens") or {}
     if not api_key or not tokens:
-        return jsonify({"error":"missing_fields","fields":["tokens","X-Api-Key"]}), 400
-    
+        return jsonify({
+            "error": "missing_fields",
+            "fields": ["tokens", "X-Api-Key"]
+        }), 400
+
     res = fetch_my_packages()
     return jsonify({"ok": True, "result": res})
 
