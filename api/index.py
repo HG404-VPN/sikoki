@@ -70,7 +70,7 @@ def api_otp_request():
     res = get_otp(contact)
 
     if res.get("status") == "FAILED":
-        return jsonify({"ok": False, "contact": contact, "error": res["error"]}), 500
+        return jsonify({"ok": False, "contact": contact, "error": res["error"]}), 400
 
     return jsonify({"ok": True, "contact": contact, "subscriber_id": res["subscriber_id"]})
 
