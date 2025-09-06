@@ -66,8 +66,13 @@ def api_otp_request():
         return jsonify({"error":"missing_fields","fields":["contact"]}), 400
     if not validate_contact(contact):
         return jsonify({"error":"invalid_contact"}), 400
+
     res = get_otp(contact)
-    return jsonify({"ok": True, "contact": contact, "result": res})
+
+    if res.get("status") == "FAILED":
+        return jsonify({"ok": False, "contact": contact, "error": res["error"]}), 500
+
+    return jsonify({"ok": True, "contact": contact, "subscriber_id": res["subscriber_id"]})
 
 @app.post("/api/otp/submit")
 def api_otp_submit():
