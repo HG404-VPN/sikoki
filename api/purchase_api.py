@@ -35,6 +35,26 @@ def get_payment_methods(
     
     return payment_res["data"]
 
+def send_api_request(api_key: str, path: str, payload: dict, id_token: str, method: str = "POST"):
+    url = f"https://api.myxl.xlaxiata.co.id/{path}"
+    headers = {
+        "host": "api.myxl.xlaxiata.co.id",
+        "content-type": "application/json; charset=utf-8",
+        "user-agent": "myXL / 8.6.0(1179); com.android.vending; (samsung; SM-N935F; SDK 33; Android 13)",
+        "x-api-key": api_key,
+        "authorization": f"Bearer {id_token}",
+        "x-hv": "v3",
+    }
+    try:
+        if method.upper() == "POST":
+            resp = requests.post(url, headers=headers, json=payload, timeout=30)
+        else:
+            resp = requests.get(url, headers=headers, params=payload, timeout=30)
+        data = resp.json()
+        return data
+    except Exception as e:
+        return {"status": "FAILED", "error": str(e)}
+
 def settlement_multipayment(
     api_key: str,
     tokens: dict,
