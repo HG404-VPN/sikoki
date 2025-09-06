@@ -44,7 +44,7 @@ def get_otp(contact: str) -> dict:
     print("Requesting OTP...")
     try:
         response = requests.get(url, headers=headers, params=querystring, timeout=30)
-        return response.json()
+        return {"status": "OK", "data": response.json()}
         
     except Exception as e:
         return {"status": "FAILED", "error": str(e)}
