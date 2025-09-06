@@ -1,6 +1,7 @@
 import json, uuid, requests, time
 from datetime import datetime, timezone, timedelta
 
+from .api.purchase_api import get_payment_methods
 from .crypto_helper import encryptsign_xdata, java_like_timestamp, ts_gmt7_without_colon, ax_api_signature, decrypt_xdata, API_KEY, get_x_signature_payment, build_encrypted_field
 
 BASE_URL = "https://api.myxl.xlaxiata.co.id"
