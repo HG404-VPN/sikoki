@@ -113,16 +113,13 @@ def api_balance():
 
 @app.post("/api/my-packages")
 def api_my_packages():
-    api_key = api_key_from_request(request)
     data = request.get_json(force=True, silent=True) or {}
+    api_key = api_key_from_request(request)
     tokens = data.get("tokens") or {}
     if not api_key or not tokens:
-        return jsonify({
-            "error": "missing_fields",
-            "fields": ["tokens", "X-Api-Key"]
-        }), 400
+        return jsonify({"error":"missing_fields","fields":["tokens","X-Api-Key"]}), 400
 
-    res = fetch_my_packages()
+    res = fetch_my_packages(api_key, tokens)
     return jsonify({"ok": True, "result": res})
 
 @app.post("/api/family")
