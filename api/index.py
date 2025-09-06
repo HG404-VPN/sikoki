@@ -15,7 +15,7 @@ from .purchase_api import (
     show_qris_payment, get_qris_code, settlement_qris, settlement_bounty
 )
 
-from .api.my_package import fetch_my_packages
+from .my_package import fetch_my_packages
 
 app = Flask(__name__)
 
