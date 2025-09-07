@@ -68,11 +68,7 @@ def api_otp_request():
         return jsonify({"error":"invalid_contact"}), 400
 
     res = get_otp(contact)
-
-    if res.get("status") == "FAILED":
-        return jsonify({"ok": False, "contact": contact, "error": res["error"]}), 400
-
-    return jsonify({"ok": True, "contact": contact, "subscriber_id": res["subscriber_id"]})
+    return jsonify({"ok": True, "contact": contact, "result": res})
 
 @app.post("/api/otp/submit")
 def api_otp_submit():
