@@ -43,15 +43,15 @@ def get_otp(contact: str) -> dict:
 
     print("Requesting OTP...")
     try:
-‎        response = requests.get(url, headers=headers, params=querystring, timeout=30)
-‎        data = response.json()
-‎
-‎        if "subscriber_id" in data:
-‎            return {"status": "OK", "data": data}
-‎        else:
-‎            return {"status": "FAILED", "error": data.get("error", "Unknown error")}
-‎    except Exception as e:
-‎        return {"status": "FAILED", "error": str(e)}
+        response = requests.get(url, headers=headers, params=querystring, timeout=30)
+        data = response.json()
+
+        if "subscriber_id" in data:
+            return {"status": "OK", "data": data}
+        else:
+            return {"status": "FAILED", "error": data.get("error", "Unknown error")}
+    except Exception as e:
+        return {"status": "FAILED", "error": str(e)}
     
 def submit_otp(api_key: str, contact: str, code: str):
     if not validate_contact(contact):
